@@ -1,0 +1,26 @@
+server:
+  port: 10000
+spring:
+  datasource:
+    username: root
+    password: Xuxing_2019
+    url: jdbc:mysql://192.168.56.10:3306/gulimall_pms?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: gulimall-product
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+  configuration:
+    cache-enabled: false
+logging:
+  level:
+    com.atguigu.gulimall: debug

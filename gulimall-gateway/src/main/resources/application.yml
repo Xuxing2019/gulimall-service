@@ -1,0 +1,58 @@
+server:
+  port: 88
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: test_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+
+        - id: qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+
+        - id: product-route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+
+        - id: third_party #id 没啥意义 唯一标识
+          uri: lb://gulimall-third-party  #url 指定目标服务(通俗一点讲就是把符合规则的请求转发到这个服务上去 lb 表示负载均衡)
+          predicates: #断言 也就是上面说的规则
+            - Path=/api/gulimallthirdparty/**
+          filters: #过滤
+            - RewritePath=/api/gulimallthirdparty(?<segment>/?.*), /$\{segment}
+
+        - id: gulimall-member #id 没啥意义 唯一标识
+          uri: lb://gulimall-member  #url 指定目标服务(通俗一点讲就是把符合规则的请求转发到这个服务上去 lb 表示负载均衡)
+          predicates: #断言 也就是上面说的规则
+            - Path=/api/member/**
+          filters: #过滤
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+
+        - id: gulimall-ware #id 没啥意义 唯一标识
+          uri: lb://gulimall-ware  #url 指定目标服务(通俗一点讲就是把符合规则的请求转发到这个服务上去 lb 表示负载均衡)
+          predicates: #断言 也就是上面说的规则
+            - Path=/api/ware/**
+          filters: #过滤
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+
+        - id: admin-route #id 没啥意义 唯一标识
+          uri: lb://renren-fast  #url 指定目标服务(通俗一点讲就是把符合规则的请求转发到这个服务上去 lb 表示负载均衡)
+          predicates: #断言 也就是上面说的规则
+            - Path=/api/**
+          filters: #过滤
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+
+
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: gulimall-gateway
+## 当路由精确度有冲突时 优先吧精确度高的路由放到前面
